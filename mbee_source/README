@@ -1,0 +1,6 @@
+The source files in this directory were written on the MicroBee
+and so target the MicroBee's assembler.  They are probably
+only useful as an example of the input that the MicroBee
+assembler processed.  See the individual file headers for
+more information on the purpose of each file.
+

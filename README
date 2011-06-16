@@ -1,0 +1,54 @@
+
+Unless otherwise specified the contents of this package are released into the public domain as detailed in the file UNLICENSE.  As a particular exception the zmac assembler's public domain license is detailed in its documentation.
+
+
+These tools were originally written as "once-offs", intended to work just well enough to extract the data needed for the original version of the NanoWasp emulator.  As such they're not particularly well tested and may need some massaging to get working on your system.  That said, please don't hesitate to contact me if you have any questions.
+
+
+Regards,
+
+Dave Churchill <dave@ninthcuriosity.com>
+
+
+Contents
+--------
+
+comms.asm - Serial communications routines for the MicroBee
+talk.asm - Simple test program for comms.asm that echos the characters received.
+serial.[ch] - Serial communications routines for the PC.
+mox.c, mix.c - Tools to send/receive files to TELCOM running on the MicroBee.
+
+ana2dsk/  - Converts AnaDisk dumps to LibDsk format.
+dumpdisk/ - Tool to dump a MicroBee disk to a raw file over a serial link.
+dumprom/  - Tools to dump MicroBee ROMs over a serial link.
+mbee_source/ - Some tools that were written in assembly on the MicroBee.  Mostly included as curiosities.
+zmac13/ - The ZMac Z80 assembler.
+
+
+Dumping a Disk Image
+--------------------
+
+1. Run "make" at the top level to build everything.
+2. Hook up a null modem cable between your PC and MicroBee (the PC software is hardcoded to use /dev/ttyS0 so you'll need to modify that if your serial device is different).
+3. Run TELCOM.COM on the MicroBee and enter "BAUD 9600" to set the baud rate to 9600, followed by "REC" to enter receive mode.
+4. Go into the dumpdisk directory and run "../mox dd.com" to send dd.com to the MicroBee.
+5. Put the disk you want to dump into drive B: (the disk with dd.com should be in drive A:).
+6. Run dd.com on the Microbee, it'll sit and wait for commands from the PC. 
+7. Run 'client <filename>' on the PC, a dump will be made into the specified file (the file will be overwritten without warning if it exists!).
+
+NOTE: There is currently a bug somewhere that results in the last byte of each sector being duplicated.  To fix the dumped image file run "conv" on it (conv.c currently has filenames hardcoded).
+
+
+Dumping a Character ROM
+-----------------------
+
+The tools in the dumprom directory allow dumping of a character ROM without removing the ROM from the motherboard.  They're also intended to be small enough to enter the machine code manually into the MicroBee's built in Monitor.
+
+1. Boot the MicroBee while holding down the 'M' key to enter the Monitor.
+2. On the PC, produce a hex dump of getchr.com (e.g. "hexdump getchr.com") and keep it visible.
+3. On the MicroBee enter the command "A 100" to edit the memory at location 100h.
+4. Carefully copy the bytes from the hex dump into the MicroBee's memory.  Press ESC when finished.
+5. Check for any mistakes by entering the command "E 100" and using Ctrl+W and Ctrl+Z to cursor up and down through memory.  Press ESC when finished.
+6. Exceute "readchr" on the PC, which will wait for the character ROM data and then write it into a file called "charrom.bin" (overwriting any existing file with this name without warning!).
+7. Execute the dumping code on the MicroBee by entering the command "G 100".
+
